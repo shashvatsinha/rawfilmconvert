@@ -18,7 +18,7 @@ process_file() {
     echo "Processing file: $input_file"
 
     # Build the ImageMagick command
-    cmd="magick \"$input_file\" -compress zip -depth 16 -resize 60% -negate"
+    cmd="magick \"$input_file\" -compress zip -depth 16 -resize 50% -negate"
     
     if [ "$grayscale" = true ]; then
         cmd+=" -colorspace gray"
