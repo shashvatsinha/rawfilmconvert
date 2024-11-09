@@ -2,9 +2,10 @@
 
 # Function to display usage information
 usage() {
-    echo "Usage: $0 [-s] [-g] <RAF filename(s) or wildcard>"
+    echo "Usage: $0 [-s] [-g] [-p] <RAF filename(s) or wildcard>"
     echo "  -s    Split the processed image into left and right halves"
     echo "  -g    Convert the image to grayscale (in addition to negation)"
+    echo "  -p    Flop (mirror) the image horizontally (for emulsion-side scans)"
     echo "  The script will always compress, resize, and negate the image(s)"
     exit 1
 }
@@ -21,6 +22,10 @@ process_file() {
     
     if [ "$grayscale" = true ]; then
         cmd+=" -colorspace gray"
+    fi
+
+    if [ "$flop" = true ]; then
+        cmd+=" -flop"
     fi
     
     cmd+=" \"${base_name}_processed.tif\""
@@ -63,15 +68,19 @@ is_raf_file() {
 # Initialize options
 split=false
 grayscale=false
+flop=false
 
 # Parse command line options
-while getopts ":sg" opt; do
+while getopts ":sgp" opt; do
     case ${opt} in
         s )
             split=true
             ;;
         g )
             grayscale=true
+            ;;
+        p )
+            flop=true
             ;;
         \? )
             usage
