@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RGB Film Scanning Light</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #FF0000; /* Start with red */
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .info-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 15px;
+            text-align: center;
+            line-height: 30px;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .info-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+            max-width: 80%;
+            display: none;
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="info-button" id="infoButton">i</div>
+    <div class="info-panel" id="infoPanel">
+        <div class="close-button" id="closeButton">✕</div>
+        <h3>RGB Film Scanning Light</h3>
+        <p>Touch anywhere on the screen to cycle through colors:</p>
+        <ul>
+            <li>Red (665nm equivalent): #FF0000</li>
+            <li>Green (525nm equivalent): #00FF00</li>
+            <li>Blue (450nm equivalent): #0000FF</li>
+        </ul>
+        <p>Place your film over the screen with a diffuser for best results.</p>
+        <p>Current color: <span id="currentColor">Red</span></p>
+    </div>
+
+    <script>
+        const colors = [
+            { hex: '#FF0000', name: 'Red' },
+            { hex: '#00FF00', name: 'Green' },
+            { hex: '#0000FF', name: 'Blue' }
+        ];
+        
+        let currentColorIndex = 0;
+        const body = document.body;
+        const infoButton = document.getElementById('infoButton');
+        const infoPanel = document.getElementById('infoPanel');
+        const closeButton = document.getElementById('closeButton');
+        const currentColorSpan = document.getElementById('currentColor');
+        
+        // Function to cycle colors
+        function cycleColor(event) {
+            // Ignore if the info panel is visible or if clicking on info button
+            if (infoPanel.style.display === 'block' || 
+                event.target === infoButton || 
+                event.target === closeButton) {
+                return;
+            }
+            
+            currentColorIndex = (currentColorIndex + 1) % colors.length;
+            body.style.backgroundColor = colors[currentColorIndex].hex;
+            currentColorSpan.textContent = colors[currentColorIndex].name;
+        }
+        
+        // Event listeners
+        body.addEventListener('click', cycleColor);
+        body.addEventListener('touchend', function(event) {
+            event.preventDefault();
+            if (event.target !== infoButton && 
+                event.target !== closeButton && 
+                event.target !== infoPanel && 
+                !infoPanel.contains(event.target)) {
+                cycleColor(event);
+            }
+        });
+        
+        infoButton.addEventListener('click', function(event) {
+            event.stopPropagation();
+            infoPanel.style.display = infoPanel.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        closeButton.addEventListener('click', function(event) {
+            event.stopPropagation();
+            infoPanel.style.display = 'none';
+        });
+        
+        // Prevent scrolling and zooming
+        document.addEventListener('touchmove', function(event) {
+            if (event.scale !== 1) {
+                event.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
